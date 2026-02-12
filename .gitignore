@@ -1,0 +1,12 @@
+.env.itest
+.env.ke-core
+.env.ke-p4-ean-usage
+.env.ke-pricing
+.env.finalbillcalculator
+.env.ke-auto-billing
+.env.ke-billing-generator
+.env.ke-hourly-product
+.env.ke-edsn-rest-api-poc
+.env.ke-pdf
+.env.ke-calculated-legacy
+.env.ke-calculated-dynamic

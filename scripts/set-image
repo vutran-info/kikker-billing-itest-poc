@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENV_FILE="${ENV_FILE:-.env.itest}"
+EXAMPLE_FILE=".env.itest.example"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/set-image <service> <tag>
+  scripts/set-image <service> <full-image:tag>
+  scripts/set-image <service> <image> <tag>
+
+Examples:
+  scripts/set-image ke-core 0.1.44
+  scripts/set-image ke-core europe-west4-docker.pkg.dev/kikker/kikker/ke-core:0.1.44
+  scripts/set-image billing-api europe-west4-docker.pkg.dev/kikker/kikker/billing-api 0.1.50
+EOF
+}
+
+if [[ $# -lt 2 || $# -gt 3 ]]; then
+  usage
+  exit 1
+fi
+
+if [[ ! -f "${ENV_FILE}" ]]; then
+  if [[ -f "${EXAMPLE_FILE}" ]]; then
+    cp "${EXAMPLE_FILE}" "${ENV_FILE}"
+  else
+    echo "Missing ${ENV_FILE} and ${EXAMPLE_FILE}." >&2
+    exit 1
+  fi
+fi
+
+service_raw="$1"
+value_a="$2"
+value_b="${3:-}"
+
+service_key="$(echo "${service_raw}" | tr '[:lower:]-' '[:upper:]_')"
+image_key="${service_key}_IMAGE"
+tag_key="${service_key}_TAG"
+
+read_key() {
+  local key="$1"
+  local value
+  value="$(awk -F= -v k="${key}" '$1 == k {print substr($0, index($0, "=") + 1)}' "${ENV_FILE}" | tail -n1 || true)"
+  echo "${value}"
+}
+
+upsert_key() {
+  local key="$1"
+  local value="$2"
+  local tmp
+  tmp="$(mktemp)"
+  awk -v k="${key}" -v v="${value}" '
+    BEGIN { done = 0 }
+    $0 ~ ("^" k "=") { print k "=" v; done = 1; next }
+    { print }
+    END { if (done == 0) print k "=" v }
+  ' "${ENV_FILE}" > "${tmp}"
+  mv "${tmp}" "${ENV_FILE}"
+}
+
+image=""
+tag=""
+
+if [[ -n "${value_b}" ]]; then
+  image="${value_a}"
+  tag="${value_b}"
+else
+  if [[ "${value_a}" == */* ]]; then
+    if [[ "${value_a}" == *:* ]]; then
+      image="${value_a%:*}"
+      tag="${value_a##*:}"
+    else
+      echo "Full image value must include :tag, or pass tag as third arg." >&2
+      exit 1
+    fi
+  else
+    tag="${value_a}"
+    image="$(read_key "${image_key}")"
+    if [[ -z "${image}" ]]; then
+      echo "Missing ${image_key} in ${ENV_FILE}. Add it first or pass image + tag." >&2
+      exit 1
+    fi
+  fi
+fi
+
+upsert_key "${image_key}" "${image}"
+upsert_key "${tag_key}" "${tag}"
+
+echo "Updated ${service_raw}:"
+echo "  ${image_key}=${image}"
+echo "  ${tag_key}=${tag}"
+echo "Env file: ${ENV_FILE}"
+

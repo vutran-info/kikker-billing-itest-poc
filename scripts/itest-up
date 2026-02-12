@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENV_FILE="${ENV_FILE:-.env.itest}"
+COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.itest.yml}"
+
+if [[ ! -f "${ENV_FILE}" ]]; then
+  cp .env.itest.example "${ENV_FILE}"
+  echo "Created ${ENV_FILE} from template."
+fi
+
+if [[ ! -f ".env.ke-core" && -f ".env.ke-core.example" ]]; then
+  cp ".env.ke-core.example" ".env.ke-core"
+  echo "Created .env.ke-core from template."
+fi
+
+if [[ ! -f ".env.ke-p4-ean-usage" && -f ".env.ke-p4-ean-usage.example" ]]; then
+  cp ".env.ke-p4-ean-usage.example" ".env.ke-p4-ean-usage"
+  echo "Created .env.ke-p4-ean-usage from template."
+fi
+
+if [[ ! -f ".env.ke-pricing" && -f ".env.ke-pricing.example" ]]; then
+  cp ".env.ke-pricing.example" ".env.ke-pricing"
+  echo "Created .env.ke-pricing from template."
+fi
+
+if [[ ! -f ".env.finalbillcalculator" && -f ".env.finalbillcalculator.example" ]]; then
+  cp ".env.finalbillcalculator.example" ".env.finalbillcalculator"
+  echo "Created .env.finalbillcalculator from template."
+fi
+
+if [[ ! -f ".env.ke-auto-billing" && -f ".env.ke-auto-billing.example" ]]; then
+  cp ".env.ke-auto-billing.example" ".env.ke-auto-billing"
+  echo "Created .env.ke-auto-billing from template."
+fi
+
+if [[ ! -f ".env.ke-billing-generator" && -f ".env.ke-billing-generator.example" ]]; then
+  cp ".env.ke-billing-generator.example" ".env.ke-billing-generator"
+  echo "Created .env.ke-billing-generator from template."
+fi
+
+if [[ ! -f ".env.ke-hourly-product" && -f ".env.ke-hourly-product.example" ]]; then
+  cp ".env.ke-hourly-product.example" ".env.ke-hourly-product"
+  echo "Created .env.ke-hourly-product from template."
+fi
+
+if [[ ! -f ".env.ke-edsn-rest-api-poc" && -f ".env.ke-edsn-rest-api-poc.example" ]]; then
+  cp ".env.ke-edsn-rest-api-poc.example" ".env.ke-edsn-rest-api-poc"
+  echo "Created .env.ke-edsn-rest-api-poc from template."
+fi
+
+if [[ ! -f ".env.ke-pdf" && -f ".env.ke-pdf.example" ]]; then
+  cp ".env.ke-pdf.example" ".env.ke-pdf"
+  echo "Created .env.ke-pdf from template."
+fi
+
+if [[ ! -f ".env.ke-calculated-legacy" && -f ".env.ke-calculated-legacy.example" ]]; then
+  cp ".env.ke-calculated-legacy.example" ".env.ke-calculated-legacy"
+  echo "Created .env.ke-calculated-legacy from template."
+fi
+
+if [[ ! -f ".env.ke-calculated-dynamic" && -f ".env.ke-calculated-dynamic.example" ]]; then
+  cp ".env.ke-calculated-dynamic.example" ".env.ke-calculated-dynamic"
+  echo "Created .env.ke-calculated-dynamic from template."
+fi
+
+docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --remove-orphans "$@"

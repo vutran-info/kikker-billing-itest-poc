@@ -1,0 +1,285 @@
+name: kikker-itest
+
+services:
+  mysql:
+    image: "${MYSQL_IMAGE}:${MYSQL_TAG}"
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    ports:
+      - "3306:3306"
+
+  rabbitmq:
+    image: "${RABBITMQ_IMAGE}:${RABBITMQ_TAG}"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  postgres:
+    image: "${POSTGRES_IMAGE}:${POSTGRES_TAG}"
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5432:5432"
+
+  ke-core:
+    image: "${KE_CORE_IMAGE}:${KE_CORE_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.ke-core
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: "${MYSQL_DATABASE}"
+      DB_USER: "${MYSQL_USER}"
+      DB_PASSWORD: "${MYSQL_PASSWORD}"
+      ConnectionString__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=${MYSQL_DATABASE};TreatTinyAsBoolean=false;Connection Timeout=900"
+      ConnectionString__Password: "${MYSQL_PASSWORD}"
+      EventBus__EventBusConnection: rabbitmq
+      EventBus__EventBusPassword: "${RABBITMQ_DEFAULT_PASS}"
+      EventBus__EventBusUserName: "${RABBITMQ_DEFAULT_USER}"
+    ports:
+      - "8081:80"
+
+  billing-api:
+    image: "${BILLING_API_IMAGE}:${BILLING_API_TAG}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ke-core:
+        condition: service_started
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: "${POSTGRES_DB}"
+      DB_USER: "${POSTGRES_USER}"
+      DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      KE_CORE_BASE_URL: "http://ke-core:80"
+    ports:
+      - "8080:8080"
+
+  ke-pricing:
+    image: "${KE_PRICING_IMAGE}:${KE_PRICING_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ke-core:
+        condition: service_started
+    env_file:
+      - .env.ke-pricing
+    environment:
+      ConnectionString__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=pricing;TreatTinyAsBoolean=false;Convert Zero Datetime=True;;Application Name=kikker_pricing;"
+      ConnectionString__Password: "${MYSQL_PASSWORD}"
+      CoreService__Url: "http://ke-core/core/api"
+      EventBus__EventBusConnection: rabbitmq
+      EventBus__EventBusPassword: "${RABBITMQ_DEFAULT_PASS}"
+      EventBus__EventBusUserName: "${RABBITMQ_DEFAULT_USER}"
+    ports:
+      - "8083:80"
+
+  ke-p4-ean-usage:
+    image: "${KE_P4_EAN_USAGE_IMAGE}:${KE_P4_EAN_USAGE_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.ke-p4-ean-usage
+    environment:
+      DB_PASSWORD: "${MYSQL_PASSWORD}"
+      MQ_PASSWORD: "${RABBITMQ_DEFAULT_PASS}"
+      flyway_url: "jdbc:mysql://mysql:3306/kikker_p4_ean_usage?autoreconnect=true&createDatabaseIfNotExist=true"
+      flyway_user: "${MYSQL_USER}"
+      spring_datasource_readonly_url: "jdbc:mysql://mysql:3306/kikker_p4_ean_usage?autoreconnect=true&createDatabaseIfNotExist=true"
+      spring_datasource_readonly_username: "${MYSQL_USER}"
+      spring_datasource_url: "jdbc:mysql://mysql:3306/kikker_p4_ean_usage?autoreconnect=true&createDatabaseIfNotExist=true"
+      spring_datasource_username: "${MYSQL_USER}"
+      spring_rabbitmq_host: rabbitmq
+      spring_rabbitmq_port: "5672"
+      spring_rabbitmq_username: "${RABBITMQ_DEFAULT_USER}"
+    ports:
+      - "8082:8082"
+
+  finalbillcalculator:
+    image: "${FINALBILLCALCULATOR_IMAGE}:${FINALBILLCALCULATOR_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ke-core:
+        condition: service_started
+      ke-pricing:
+        condition: service_started
+    env_file:
+      - .env.finalbillcalculator
+    environment:
+      ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke-billing;TreatTinyAsBoolean=false"
+      ConnectionStrings__Password: "${MYSQL_PASSWORD}"
+      CoreSetting__BaseUrl: "http://ke-core/"
+      PricingSetting__BaseUrl: "http://ke-pricing/"
+    ports:
+      - "8084:8080"
+
+  ke-auto-billing:
+    image: "${KE_AUTO_BILLING_IMAGE}:${KE_AUTO_BILLING_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      finalbillcalculator:
+        condition: service_started
+    env_file:
+      - .env.ke-auto-billing
+    environment:
+      CalculationSetting__BaseUrl: "http://finalbillcalculator:8080/"
+      ConnectionStrings__MySqlCore: "Server=mysql;Database=kikkercore;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
+      ConnectionStrings__PasswordCore: "${MYSQL_PASSWORD}"
+      ConnectionStrings__MySql: "Server=mysql;Database=ke-auto-billing;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
+      ConnectionStrings__Password: "${MYSQL_PASSWORD}"
+    ports:
+      - "8085:80"
+
+  ke-billing-generator:
+    image: "${KE_BILLING_GENERATOR_IMAGE}:${KE_BILLING_GENERATOR_TAG}"
+    depends_on:
+      ke-core:
+        condition: service_started
+      ke-pricing:
+        condition: service_started
+      finalbillcalculator:
+        condition: service_started
+      ke-p4-ean-usage:
+        condition: service_started
+      ke-calculated-legacy:
+        condition: service_started
+      ke-calculated-dynamic:
+        condition: service_started
+    env_file:
+      - .env.ke-billing-generator
+    environment:
+      CoreService__BaseUrl: "http://ke-core"
+      PricingService__BaseUrl: "http://ke-pricing"
+      BillingCalculatorService__BaseUrl: "http://finalbillcalculator:8080"
+      CalSetting__BaseUrl: "http://ke-calculated-legacy"
+      CalDynamicSetting__BaseUrl: "http://ke-calculated-dynamic"
+      TmrSetting__BaseUrl: "http://ke-p4-ean-usage:8082"
+      P4Setting__BaseUrl: "http://ke-p4-ean-usage:8082"
+    ports:
+      - "8086:80"
+
+  ke-hourly-product:
+    image: "${KE_HOURLY_PRODUCT_IMAGE}:${KE_HOURLY_PRODUCT_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ke-p4-ean-usage:
+        condition: service_started
+    env_file:
+      - .env.ke-hourly-product
+    environment:
+      ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke_hourly_product;TreatTinyAsBoolean=false"
+      P4EanUsage__BaseUrl: "http://ke-p4-ean-usage:8082"
+    ports:
+      - "8087:80"
+
+  ke-edsn-rest-api-poc:
+    image: "${KE_EDSN_REST_API_POC_IMAGE}:${KE_EDSN_REST_API_POC_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env.ke-edsn-rest-api-poc
+    environment:
+      ConnectionStrings__MainDatabase: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke_edsn_rest_api_poc;TreatTinyAsBoolean=false"
+      ASPNETCORE_URLS: "http://+:80"
+    ports:
+      - "8088:80"
+
+  ke-pdf:
+    image: "${KE_PDF_IMAGE}:${KE_PDF_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env.ke-pdf
+    environment:
+      ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke-pdf;TreatTinyAsBoolean=false"
+      ConnectionStrings__Password: "${MYSQL_PASSWORD}"
+      ASPNETCORE_URLS: "http://+:80"
+    ports:
+      - "8089:80"
+
+  ke-calculated-legacy:
+    image: "${KE_CALCULATED_LEGACY_IMAGE}:${KE_CALCULATED_LEGACY_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env.ke-calculated-legacy
+    environment:
+      database__server: mysql
+      database__port: "3306"
+      database__user: "${MYSQL_USER}"
+      database__password: "${MYSQL_PASSWORD}"
+      writedatabase__server: mysql
+      writedatabase__port: "3306"
+      writedatabase__user: "${MYSQL_USER}"
+      writedatabase__password: "${MYSQL_PASSWORD}"
+    ports:
+      - "8090:80"
+
+  ke-calculated-dynamic:
+    image: "${KE_CALCULATED_DYNAMIC_IMAGE}:${KE_CALCULATED_DYNAMIC_TAG}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env.ke-calculated-dynamic
+    environment:
+      ConnectionStrings__WriteDatabaseConnection: "Server=mysql;Port=3306;Database=fractions3;Uid=${MYSQL_USER};Pwd=${MYSQL_PASSWORD}"
+      ConnectionStrings__ReadDatabaseConnection: "Server=mysql;Port=3306;Database=fractions3;Uid=${MYSQL_USER};Pwd=${MYSQL_PASSWORD}"
+    ports:
+      - "8091:80"
+
+  itest-runner:
+    image: "${ITEST_RUNNER_IMAGE}:${ITEST_RUNNER_TAG}"
+    profiles: ["itest"]
+    depends_on:
+      billing-api:
+        condition: service_started
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    entrypoint: ["/bin/sh", "-lc"]
+    command: ["echo 'override command to run integration tests' && sleep infinity"]
