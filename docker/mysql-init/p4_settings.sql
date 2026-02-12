@@ -1,0 +1,16 @@
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (1, 'tmr_mock_api', 'true');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (2, 'tmr_mock_data_from_db', 'false');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (3, 'rejection_codes_will_be_retried', '012,014,041');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (4, 'retry_times_for_day', '30');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (5, 'retry_times_for_int', '10');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (6, 'retry_times_for_message_queue', '500');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (7, 'disable_send_hourly_message_directly', 'true');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (8, 'new_p4_flow_deployed_date', '2023-04-15');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (9, 'sleep_millis_push_message_to_core', '250');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (10, 'limit_messages_push_to_core', '1000');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (11, 'rejection_codes_are_handled', '006,007,008,009,011,012,013,014,038,039,041');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (12, 'generic_rejection_code', '000');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (13, 'num_days_retry_prepare_data', '5');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (14, 'register_reading_messages_per_second_limit', '100');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (15, 'enable_tmr_mock_data_push_api', 'true');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (16, 'enable_automation_api', 'true');

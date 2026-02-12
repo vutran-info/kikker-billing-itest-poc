@@ -28,6 +28,8 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `.env.itest`: local override file (generated from example, gitignored)
 - `.env.ke-core.example`: baseline runtime env for `ke-core`
 - `.env.ke-core`: local `ke-core` env (generated from example, gitignored)
+- `.env.ke-core.local.example`: local-only `ke-core` secret overrides template
+- `.env.ke-core.local`: local-only `ke-core` secrets (gitignored)
 - `.env.ke-p4-ean-usage.example`: baseline runtime env for `ke-p4-ean-usage`
 - `.env.ke-p4-ean-usage`: local `ke-p4-ean-usage` env (generated from example, gitignored)
 - `.env.ke-pricing.example`: baseline runtime env for `ke-pricing`
@@ -51,6 +53,7 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `scripts/set-image`: update image/tag for a service
 - `scripts/itest-up`: start integration environment
 - `scripts/itest-down`: stop integration environment
+- `scripts/mysql-sync`: re-run idempotent MySQL init against existing volume (no `down -v`)
 - `scripts/verify-images`: verify running image per service
 
 ## Quick Start
@@ -70,6 +73,22 @@ cp .env.ke-calculated-legacy.example .env.ke-calculated-legacy
 cp .env.ke-calculated-dynamic.example .env.ke-calculated-dynamic
 ./scripts/itest-up
 ./scripts/verify-images
+```
+
+## Update DB Without Reset Volume
+
+`docker-entrypoint-initdb.d` only runs automatically on first init.  
+To apply new DB SQL/init changes on an existing MySQL volume:
+
+```bash
+./scripts/mysql-sync
+```
+
+`./scripts/itest-up` now auto-runs `mysql-sync` after `up`.  
+To skip this behavior:
+
+```bash
+SKIP_MYSQL_SYNC=true ./scripts/itest-up
 ```
 
 ## Swap Image Fast

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENV_FILE="${ENV_FILE:-.env.itest}"
+COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.itest.yml}"
+WAIT_RETRIES="${MYSQL_SYNC_WAIT_RETRIES:-120}"
+WAIT_SLEEP="${MYSQL_SYNC_WAIT_SLEEP:-2}"
+
+if [[ ! -f "${ENV_FILE}" ]]; then
+  echo "Env file not found: ${ENV_FILE}" >&2
+  exit 1
+fi
+
+echo "Waiting for mysql to be ready..."
+for ((i=1; i<=WAIT_RETRIES; i++)); do
+  if docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" exec -T mysql \
+    sh -lc 'mysqladmin ping -h127.0.0.1 -uroot -p"${MYSQL_ROOT_PASSWORD}" --silent' >/dev/null 2>&1; then
+    echo "mysql is ready."
+    break
+  fi
+
+  if [[ $i -eq $WAIT_RETRIES ]]; then
+    echo "mysql is not ready after ${WAIT_RETRIES} retries." >&2
+    exit 1
+  fi
+
+  sleep "${WAIT_SLEEP}"
+done
+
+echo "Running idempotent DB sync..."
+docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" exec -T mysql \
+  sh -lc '/docker-entrypoint-initdb.d/10-init-all-databases.sh'
+
+echo "DB sync completed."

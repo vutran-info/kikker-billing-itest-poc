@@ -14,6 +14,11 @@ if [[ ! -f ".env.ke-core" && -f ".env.ke-core.example" ]]; then
   echo "Created .env.ke-core from template."
 fi
 
+if [[ ! -f ".env.ke-core.local" && -f ".env.ke-core.local.example" ]]; then
+  cp ".env.ke-core.local.example" ".env.ke-core.local"
+  echo "Created .env.ke-core.local from template."
+fi
+
 if [[ ! -f ".env.ke-p4-ean-usage" && -f ".env.ke-p4-ean-usage.example" ]]; then
   cp ".env.ke-p4-ean-usage.example" ".env.ke-p4-ean-usage"
   echo "Created .env.ke-p4-ean-usage from template."
@@ -65,3 +70,7 @@ if [[ ! -f ".env.ke-calculated-dynamic" && -f ".env.ke-calculated-dynamic.exampl
 fi
 
 docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --remove-orphans "$@"
+
+if [[ "${SKIP_MYSQL_SYNC:-false}" != "true" ]]; then
+  ENV_FILE="${ENV_FILE}" COMPOSE_FILE="${COMPOSE_FILE}" "$(dirname "$0")/mysql-sync"
+fi

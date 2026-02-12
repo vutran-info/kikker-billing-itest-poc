@@ -8,11 +8,14 @@ services:
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    volumes:
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent"]
       interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 120
     ports:
       - "3306:3306"
 
@@ -55,6 +58,7 @@ services:
         condition: service_healthy
     env_file:
       - .env.ke-core
+      - .env.ke-core.local
     environment:
       DB_HOST: mysql
       DB_PORT: "3306"
@@ -71,6 +75,7 @@ services:
 
   billing-api:
     image: "${BILLING_API_IMAGE}:${BILLING_API_TAG}"
+    profiles: ["optional"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -145,6 +150,8 @@ services:
     env_file:
       - .env.finalbillcalculator
     environment:
+      GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
+      GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
       ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke-billing;TreatTinyAsBoolean=false"
       ConnectionStrings__Password: "${MYSQL_PASSWORD}"
       CoreSetting__BaseUrl: "http://ke-core/"
@@ -162,6 +169,8 @@ services:
     env_file:
       - .env.ke-auto-billing
     environment:
+      GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
+      GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
       CalculationSetting__BaseUrl: "http://finalbillcalculator:8080/"
       ConnectionStrings__MySqlCore: "Server=mysql;Database=kikkercore;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
       ConnectionStrings__PasswordCore: "${MYSQL_PASSWORD}"
@@ -208,20 +217,23 @@ services:
     env_file:
       - .env.ke-hourly-product
     environment:
-      ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke_hourly_product;TreatTinyAsBoolean=false"
+      GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
+      GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
+      ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=kikker_hourly;TreatTinyAsBoolean=false"
       P4EanUsage__BaseUrl: "http://ke-p4-ean-usage:8082"
     ports:
       - "8087:80"
 
   ke-edsn-rest-api-poc:
     image: "${KE_EDSN_REST_API_POC_IMAGE}:${KE_EDSN_REST_API_POC_TAG}"
+    user: "0:0"
     depends_on:
       mysql:
         condition: service_healthy
     env_file:
       - .env.ke-edsn-rest-api-poc
     environment:
-      ConnectionStrings__MainDatabase: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke_edsn_rest_api_poc;TreatTinyAsBoolean=false"
+      ConnectionStrings__MainDatabase: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=EDSNScaled;TreatTinyAsBoolean=false"
       ASPNETCORE_URLS: "http://+:80"
     ports:
       - "8088:80"
@@ -234,6 +246,8 @@ services:
     env_file:
       - .env.ke-pdf
     environment:
+      GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
+      GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
       ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke-pdf;TreatTinyAsBoolean=false"
       ConnectionStrings__Password: "${MYSQL_PASSWORD}"
       ASPNETCORE_URLS: "http://+:80"
@@ -276,10 +290,13 @@ services:
     image: "${ITEST_RUNNER_IMAGE}:${ITEST_RUNNER_TAG}"
     profiles: ["itest"]
     depends_on:
-      billing-api:
+      ke-billing-generator:
         condition: service_started
     working_dir: /workspace
     volumes:
       - ./:/workspace
     entrypoint: ["/bin/sh", "-lc"]
     command: ["echo 'override command to run integration tests' && sleep infinity"]
+
+volumes:
+  mysql_data:

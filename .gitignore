@@ -1,5 +1,6 @@
 .env.itest
 .env.ke-core
+.env.ke-core.local
 .env.ke-p4-ean-usage
 .env.ke-pricing
 .env.finalbillcalculator

@@ -1,0 +1,13 @@
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190212152002_init', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190213112025_update-null-values', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190213155946_add-master-data-update', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190214112823_added-lgru-type', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190214120248_add-indexes-lgru-mdu', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190328120133_external-reference-on-master-update', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190401092741_added-rejection-code', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20190404073151_add-last-retry-date', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20200909081526_Add_EDSNCreatedTime', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20210715093349_AddTableSoapLog', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20230726094001_contractlossnotifications', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20231115153143_disputes', '3.1.1');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20231117132617_add-guid-to-dispute', '3.1.1');

@@ -1,0 +1,16 @@
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240118082013_Initial', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240122075133_change_external_id_to_char64', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240124023723_create table customer reseller location', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240124082555_Convert billingtask table\'s status type from int to string', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240124103921_update some value in Reseller and Customer table', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240125074408_lowercase table name resellers and locations', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240129080957_change_contractDuration_to_string', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240220040550_AddcolumnBillingExternalIdinBillingTask', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240221082429_UpdateRecordUpdatedDateInBillingTask', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20240311021949_RemoteTableCustomerResellerLocation', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20241017042631_ContractAutoPrepare', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20250120033021_AddColumnIsUsedPopulateInAutoBillingTaskTable', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20250313110708_AlterBillingTasks_IsArchived', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20250318033650_AlterBillingTasks_ActionStatus', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20250318085610_RemoveActionStatus_BillingTasks', '6.0.7');
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) VALUES ('20250326111232_AddUncollectibePeriods', '6.0.7');
