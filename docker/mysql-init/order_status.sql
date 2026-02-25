@@ -1,0 +1,11 @@
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (1, 'ToBeSigned', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (2, 'Sent', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (3, 'Pending', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (4, 'Error', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (5, 'Activated', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (6, 'Canceled', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (7, 'Signed', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (8, 'Expired', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (9, 'Overdue', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (10, 'Ended', b'1');
+INSERT IGNORE INTO `order_status` (`id`, `name`, `activated`) VALUES (11, 'Declined', b'1');

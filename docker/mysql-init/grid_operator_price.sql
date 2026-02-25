@@ -1,0 +1,3 @@
+INSERT IGNORE INTO `grid_operator_price` (`id`, `capacity`, `connection_service`, `transport_fixed`, `transport`, `smart_meter`, `profile_category`, `area_id`) VALUES (1, '1x6', 0.57960, 0.00000, 0.00000, 0.00000, 'E1B', 3);
+INSERT IGNORE INTO `grid_operator_price` (`id`, `capacity`, `connection_service`, `transport_fixed`, `transport`, `smart_meter`, `profile_category`, `area_id`) VALUES (2, 'G10', 0.45240, 0.00000, 0.00000, 0.00000, 'G1A', 2);
+INSERT IGNORE INTO `grid_operator_price` (`id`, `capacity`, `connection_service`, `transport_fixed`, `transport`, `smart_meter`, `profile_category`, `area_id`) VALUES (3, '1x6', 0.57960, 0.00000, 0.00000, 0.00000, 'E1C', 1);

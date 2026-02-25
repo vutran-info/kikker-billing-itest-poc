@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "kikker",
+  "private_key_id": "fakekeyid1234567890",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCrskVKRXQAvQY0\nldvhOZiGg8QUpvu40qF6ql5rGb0FCo1X7odiQuzfyP9CuEVoukqXLFQuvwPXdS6d\n2T/eFyao5Gk6QhWdXUH03DpEQ3ugSvDUV6bQ9DTYHEVzKBMr/YW1Pz4CZ6tz/6LT\nFhGP4Qf86WNPrfkKcVdfDfSN2M3uxq76vkCWYflGguhLtd1VPq3b1lg6IVOh18tD\nGG4tlljWXl93dRyfznQAkE7xmHFX245Z6GuBNXAb+nNf5oLc69ByA/iFcw5JDWS6\nyIezd/8Phj/OkalpUPPFmePco3G2aZ9VZhyrIeuw6686FCEZbR+1nSWXOtz1KXu7\n98vRh3ppAgMBAAECggEAAQH/dsIYbLfGmDsPUgb7BRPWd8KQy8dW6QlehA4lwdcL\nm2/vCWljynYehi3HWuIm3jSRLb/K09gRvcCiSpCSfwUzejF5YdLbLMEV/ex+kjqF\np6Lg+9XSZcRX/OzThW/mS1YyA2SZwFqZ05HR0cCEzZ7rckQmHGTO64belGLAFIPw\nBoQYgiir+sCV+sS/uqGk5HxDIMM7AEMPNUs28vpp4yo8KTdbqNrusF9+B13LjfUH\nfSacMk+iaJict9AwxL0SFa8LNYJS5ttXUYK47eV/tG5h0RoOjrM7rFSLXAlQinX8\nK5/8FzbtL6OIPbtropxiNBeV3v5BEJ6h5QYdEut/YwKBgQDh+AWSN7ZeralTiCFe\naojMhh/DXUMZdHb4egIXjP7UVXJyUZPNGkokon2Nhk1rE6juYpyOweYsjNVfkoF4\nPCwvFHj0S69xUL5LewMeddVGx7nrCDLiHK2hW5NtGjeXDTxqKXmnh8XklvdBXMbZ\n8WDF+8zFtrHgbIgCoMG+ImaePwKBgQDCg8ZtpfgSpYqY2pGX7AE+3sp4eO2CW3Ae\ngajTTsSeOUUv2ZQi8YGWpLSvXRJzTG4pRNHoalxtbAqz3vCOtqKWbWYfiS1NmLXz\nYofdC/vbkUbEQR2D+Y++g2kxQNac80zpkNpoDwz97DGNXA9a6yyRjU5yq4uzUtZP\nIyGKMsGNVwKBgAGt3SS8Az/q3HJBdbYE5qVWbc/+1mvPAL9R8MgKBS7Av8v3rTh9\n9IUXLAWsNNER4VR8KRuqdzJnjYJbTVj+YXmsFkYCdfhKmE9pR5mnWIFhJJGJiw9B\nFU04p/zMkBMwRv2m9z92c9MCCC5VKSkfcQ+nklr5w5KeW9hhJ29pRAfzAoGBAJPo\nc/honcxACLXWbaNiGEhgTQFyotffA9COs3uKh8PwtIWAIz62+d08/Q/j6+W0lofX\nBu5+Ai5KW5EO00kR42wTX/ZW7xX0K1cY80rIlAkP3QnaocD7AazSbCjBru/FqhRo\ny0sZNr3W3o8pE5wE++zp0F8txprjQIcIpbZahgcdAoGAZ/4ssEcJr8uqyBdEAJmG\n2ZIFsKpkXmvjAxlFnTRrymortFvQeTGg9e+prV/uxPKhV67S7raAe8rxCW+QM+cz\n+8+TYcSyHIxy5c7EEyzUFkR7dDZywW3QJXeaNBgVFa9kkuqQzsWEpcfRTiD5/xbn\nD52av+bTKLfTTT70WV47un4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "kikker-itest@kikker.iam.gserviceaccount.com",
+  "client_id": "123456789012345678901",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kikker-itest@kikker.iam.gserviceaccount.com"
+}

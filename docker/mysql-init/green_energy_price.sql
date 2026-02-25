@@ -1,0 +1,12 @@
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (1, 'NL Wind', 'NL_WIND', 0.00840, 2020, '2020-10-29 10:34:36');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (2, 'EU Wind', 'EU_WIND', 0.00190, 2020, '2020-10-29 10:34:39');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (3, 'Hydro (Nordic origin)', 'HYDRO_NORDIC_ORIGIN', 0.00185, 2020, '2020-10-29 10:34:42');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (4, 'Biomass', 'BIOMASS', 0.00185, 2020, '2020-10-29 10:34:44');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (5, 'Solar', 'SOLAR', 0.00195, 2020, '2020-10-29 10:34:47');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (6, 'Solar NL', 'SOLAR_NL', 0.00780, 2020, '2020-10-29 10:34:49');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (7, 'NL Wind', 'NL_WIND', 0.00840, 2021, '2021-01-06 10:34:36');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (8, 'EU Wind', 'EU_WIND', 0.00190, 2021, '2021-01-06 10:34:39');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (9, 'Hydro (Nordic origin)', 'HYDRO_NORDIC_ORIGIN', 0.00185, 2021, '2021-01-06 10:34:42');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (10, 'Biomass', 'BIOMASS', 0.00185, 2021, '2021-01-06 10:34:44');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (11, 'Solar', 'SOLAR', 0.00195, 2021, '2021-01-06 10:34:47');
+INSERT IGNORE INTO `green_energy_price` (`id`, `name`, `type`, `price`, `year`, `created_date`) VALUES (12, 'Solar NL', 'SOLAR_NL', 0.00780, 2021, '2021-01-06 10:34:49');

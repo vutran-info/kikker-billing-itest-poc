@@ -54,6 +54,33 @@ import_history_if_empty() {
   mysql_exec --database="$db_name" < "/docker-entrypoint-initdb.d/${sql_file}"
 }
 
+import_data_file() {
+  db_name="$1"
+  sql_file="$2"
+
+  echo "[mysql-init] Import data ${db_name} from ${sql_file}"
+  mysql_exec --database="$db_name" < "/docker-entrypoint-initdb.d/${sql_file}"
+}
+
+import_data_file_ignore_fk() {
+  db_name="$1"
+  sql_file="$2"
+
+  echo "[mysql-init] Import data ${db_name} from ${sql_file} (FOREIGN_KEY_CHECKS=0)"
+  mysql_exec --database="$db_name" <<SQL
+SET FOREIGN_KEY_CHECKS=0;
+SOURCE /docker-entrypoint-initdb.d/${sql_file};
+SET FOREIGN_KEY_CHECKS=1;
+SQL
+}
+
+pricing_seed_loaded() {
+  table_has_rows "pricing" "PV_price" \
+    && table_has_rows "pricing" "kikker_topup_fee" \
+    && table_has_rows "pricing" "reseller_topup_fee" \
+    && table_has_rows "pricing" "reseller_fixed_delivery_cost"
+}
+
 ensure_db "kikker_p4_ean_usage"
 ensure_db "kikkercore"
 ensure_db "pricing"
@@ -93,6 +120,52 @@ fi
 import_history_if_empty "ke-auto-billing" "__EFMigrationsHistory" "__EFMigrationsHistory_auto-billing.sql"
 import_history_if_empty "ke-billing" "__EFMigrationsHistory" "__EFMigrationsHistory_finalbillcalculator.sql"
 import_history_if_empty "ke-pdf" "__EFMigrationsHistory" "__EFMigrationsHistory_ke-pdf.sql"
+
+# Pricing static seed (import once; keep across test-case resets)
+if pricing_seed_loaded; then
+  echo "[mysql-init] Skip pricing static seed (already loaded)"
+else
+  echo "[mysql-init] Import pricing static seed data"
+  import_data_file_ignore_fk "pricing" "default_setting.sql"
+  import_data_file_ignore_fk "pricing" "reseller_company.sql"
+  import_data_file_ignore_fk "pricing" "reseller_product.sql"
+  import_data_file_ignore_fk "pricing" "DVEP_pricing_sheet.sql"
+  import_data_file_ignore_fk "pricing" "PV_price.sql"
+  import_data_file_ignore_fk "pricing" "VAT.sql"
+  import_data_file_ignore_fk "pricing" "energy_tax.sql"
+  import_data_file_ignore_fk "pricing" "reduction_energy_tax.sql"
+  import_data_file_ignore_fk "pricing" "sustainable_energy_storage.sql"
+  import_data_file_ignore_fk "pricing" "transport_cost.sql"
+  import_data_file_ignore_fk "pricing" "grid_operator.sql"
+  import_data_file_ignore_fk "pricing" "grid_operator_price.sql"
+  import_data_file_ignore_fk "pricing" "fixed_delivery_cost.sql"
+  import_data_file_ignore_fk "pricing" "kikker_business_fixed_delivery_cost.sql"
+  import_data_file_ignore_fk "pricing" "kikker_topup_fee.sql"
+  import_data_file_ignore_fk "pricing" "reseller_topup_fee.sql"
+  import_data_file_ignore_fk "pricing" "kikker_topup_fee_frdc.sql"
+  import_data_file_ignore_fk "pricing" "reseller_topup_fee_frdc.sql"
+  import_data_file_ignore_fk "pricing" "kikker_feed_in_fee.sql"
+  import_data_file_ignore_fk "pricing" "reseller_feed_in_fee.sql"
+  import_data_file_ignore_fk "pricing" "kikker_portfolio_fee.sql"
+  import_data_file_ignore_fk "pricing" "reseller_portfolio_fee.sql"
+  import_data_file_ignore_fk "pricing" "return_delivery_tariff.sql"
+  import_data_file_ignore_fk "pricing" "frdc_sheet.sql"
+  import_data_file_ignore_fk "pricing" "green_energy_price.sql"
+fi
+
+# Flow sample data (idempotent files use INSERT IGNORE)
+import_data_file_ignore_fk "kikkercore" "kk_contract.sql"
+import_data_file_ignore_fk "kikkercore" "order_status.sql"
+import_data_file_ignore_fk "kikkercore" "kk_order.sql"
+import_data_file_ignore_fk "kikkercore" "contract_info_master_lookup_C20241292.sql"
+import_data_file_ignore_fk "kikkercore" "contract_info_data_C20241292.sql"
+import_data_file_ignore_fk "EDSNScaled" "masterDataUpdate.sql"
+import_data_file "ke-auto-billing" "contract_auto_prepare.sql"
+import_data_file "ke-auto-billing" "billing_tasks.sql"
+import_data_file "kikker_p4_ean_usage" "p4_metering_point_ean_871692493900164636.sql"
+import_data_file "kikker_p4_ean_usage" "p4_metering_point_ean_871692493900374813.sql"
+import_data_file "kikker_p4_ean_usage" "p4_register_reading_ean_871692493900164636.sql"
+import_data_file "kikker_p4_ean_usage" "p4_register_reading_ean_871692493900374813.sql"
 
 mysql_exec -e "FLUSH PRIVILEGES;"
 echo "[mysql-init] Done"

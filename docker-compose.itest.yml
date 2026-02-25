@@ -154,6 +154,8 @@ services:
       GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
       ConnectionStrings__MySql: "Server=mysql;User Id=${MYSQL_USER};Password=${MYSQL_PASSWORD};port=3306;Database=ke-billing;TreatTinyAsBoolean=false"
       ConnectionStrings__Password: "${MYSQL_PASSWORD}"
+      AutoBillingService__BaseUrl: "http://ke-auto-billing:80/"
+      CollectorService__BaseUrl: "http://ke-billing-generator:80/"
       CoreSetting__BaseUrl: "http://ke-core/"
       PricingSetting__BaseUrl: "http://ke-pricing/"
     ports:
@@ -171,7 +173,8 @@ services:
     environment:
       GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
       GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
-      CalculationSetting__BaseUrl: "http://finalbillcalculator:8080/"
+      CalculationSetting__BaseUrl: "http://finalbillcalculator:80/"
+      HourlyService__BaseUrl: "http://ke-hourly-product:80/"
       ConnectionStrings__MySqlCore: "Server=mysql;Database=kikkercore;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
       ConnectionStrings__PasswordCore: "${MYSQL_PASSWORD}"
       ConnectionStrings__MySql: "Server=mysql;Database=ke-auto-billing;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
@@ -198,10 +201,12 @@ services:
       - .env.ke-billing-generator
     environment:
       CoreService__BaseUrl: "http://ke-core"
+      EdsnService__BaseUrl: "http://ke-edsn-rest-api-poc"
       PricingService__BaseUrl: "http://ke-pricing"
-      BillingCalculatorService__BaseUrl: "http://finalbillcalculator:8080"
-      CalSetting__BaseUrl: "http://ke-calculated-legacy"
-      CalDynamicSetting__BaseUrl: "http://ke-calculated-dynamic"
+      BillingCalculatorService__BaseUrl: "http://finalbillcalculator:80"
+      HourlySetting__BaseUrl: "http://ke-hourly-product:80"
+      CalSetting__BaseUrl: "http://ke-calculated-legacy:80"
+      CalDynamicSetting__BaseUrl: "http://ke-calculated-dynamic:8080"
       TmrSetting__BaseUrl: "http://ke-p4-ean-usage:8082"
       P4Setting__BaseUrl: "http://ke-p4-ean-usage:8082"
     ports:
@@ -270,6 +275,11 @@ services:
       writedatabase__port: "3306"
       writedatabase__user: "${MYSQL_USER}"
       writedatabase__password: "${MYSQL_PASSWORD}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/var/secrets/google/key.json"
+      GOOGLE_CLOUD_PROJECT: "${GCP_PROJECT_ID}"
+      GOOGLE_PROJECT_ID: "${GCP_PROJECT_ID}"
+    volumes:
+      - ./docker/fake-gcp/adc.json:/var/secrets/google/key.json:ro
     ports:
       - "8090:80"
 
