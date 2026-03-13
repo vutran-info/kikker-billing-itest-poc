@@ -182,6 +182,11 @@ ke_pdf_static_seed_loaded() {
     && table_has_rows "ke-pdf" "headers"
 }
 
+ke_billing_static_seed_loaded() {
+  table_has_rows "ke-billing" "billing_addresses" \
+    && table_has_rows "ke-billing" "reseller"
+}
+
 ensure_db "kikker_p4_ean_usage"
 ensure_db "kikkercore"
 ensure_db "pricing"
@@ -261,6 +266,15 @@ else
   import_data_file_ignore_fk "ke-pdf" "templates_reseller.sql"
   import_data_file_ignore_fk "ke-pdf" "headers.sql"
   import_data_file_ignore_fk "ke-pdf" "footers.sql"
+fi
+
+# ke-billing static seed (import once; keep across test-case resets)
+if ke_billing_static_seed_loaded; then
+  echo "[mysql-init] Skip ke-billing static seed (already loaded)"
+else
+  echo "[mysql-init] Import ke-billing static seed data"
+  import_data_file_ignore_fk "ke-billing" "ke-reseller-billing-addresses.sql"
+  import_data_file_ignore_fk "ke-billing" "ke-billing-reseller-all.sql"
 fi
 
 # Flow sample data (idempotent files use INSERT IGNORE)
