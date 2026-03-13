@@ -2,6 +2,8 @@
 
 Integration test environment with Docker Compose and centralized image override.
 
+This repository now also contains a standalone integration-test runner layer that is intentionally separate from the environment under test.
+
 ## Goal
 
 Swap any microservice image/tag from Google Artifact Registry in one place, with one command.
@@ -55,6 +57,13 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `scripts/itest-down`: stop integration environment
 - `scripts/mysql-sync`: re-run idempotent MySQL init against existing volume (no `down -v`)
 - `scripts/verify-images`: verify running image per service
+- `PLAN.md`: rollout plan for the standalone integration-test runner
+- `ARCHITECTURE.md`: rationale for separating the environment under test from the test runner
+- `testspec/`: language-agnostic integration flow specs
+- `runners/csharp/`: first black-box integration-test runner implementation
+- `runners/java/`: placeholder for future Java runner
+- `runners/python/`: placeholder for future Python runner
+- `scripts/test-csharp`: run the C# integration runner
 
 ## Quick Start
 
@@ -124,6 +133,32 @@ Use `docker-compose.itest.yml` and `.env.itest` as the single source for service
 ```bash
 ./scripts/itest-up --profile itest
 ```
+
+## Standalone Integration Runner
+
+The Compose stack in this repository is the system under test.
+The integration runner is a separate client that calls the running system and verifies side effects.
+
+Current structure:
+
+- `testspec/` stores the language-agnostic flow definition
+- `runners/csharp/` contains the first runner implementation using `xUnit`
+- `runners/java/` and `runners/python/` are reserved for future parity runners
+
+Run the first smoke test:
+
+```bash
+./scripts/itest-up
+./scripts/test-csharp
+```
+
+The first smoke test currently validates:
+
+- trigger `ke-auto-billing`
+- wait for a newer `ke-billing.billing_interaction_log` row for `C20241292`
+- assert the row is `YEARLY_BILL`
+- assert `billing_id > 0`
+- assert `ke-auto-billing.billing_tasks.perform_date` is set
 
 ## Notes
 
