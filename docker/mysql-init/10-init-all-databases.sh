@@ -133,6 +133,8 @@ SQL
 refresh_ke_billing_grid_operator_testcase_data() {
   echo "[mysql-init] Refresh ke-billing grid operator testcase data"
   mysql_exec --database="ke-billing" <<'SQL'
+SET FOREIGN_KEY_CHECKS=0;
+
 DELETE s
 FROM `grid_sub_operators` s
 JOIN `grid_operators` g ON g.`id` = s.`grid_operator_id`
@@ -140,6 +142,8 @@ WHERE g.`ean` = '8712423014022';
 
 DELETE FROM `grid_operators`
 WHERE `ean` = '8712423014022';
+
+SET FOREIGN_KEY_CHECKS=1;
 SQL
 
   import_data_file_ignore_fk "ke-billing" "grid_operators.sql"
