@@ -11,3 +11,14 @@
 .env.ke-pdf
 .env.ke-calculated-legacy
 .env.ke-calculated-dynamic
+
+# macOS
+.DS_Store
+
+# .NET build output
+bin/
+obj/
+TestResults/
+
+# IDE
+.vs/
