@@ -24,10 +24,10 @@ Lien quan customer/user:
 
 Nguon:
 
-- `docker/mysql-init/kk_contract.sql`
-- `docker/mysql-init/kk_order.sql`
-- `docker/mysql-init/contract_info_master_lookup_C20241292.sql`
-- `docker/mysql-init/contract_info_data_C20241292.sql`
+- `docker/test-data/testcase-001/kk_contract.sql`
+- `docker/test-data/testcase-001/kk_order.sql`
+- `docker/test-data/testcase-001/contract_info_master_lookup_C20241292.sql`
+- `docker/test-data/testcase-001/contract_info_data_C20241292.sql`
 
 ### Contract
 
@@ -126,8 +126,8 @@ Order gas:
 
 Nguon:
 
-- `docker/mysql-init/contract_auto_prepare.sql`
-- `docker/mysql-init/billing_tasks.sql`
+- `docker/test-data/testcase-001/contract_auto_prepare.sql`
+- `docker/test-data/testcase-001/billing_tasks.sql`
 
 ### Contract auto prepare
 
@@ -151,10 +151,10 @@ Note:
 
 Nguon:
 
-- `docker/mysql-init/MasterDataUpdates_Ean_871692493900164636.sql`
-- `docker/mysql-init/MasterDataUpdates_Ean_871692493900374813.sql`
-- `docker/mysql-init/EDSNRequests_Ean_871692493900164636.sql`
-- `docker/mysql-init/EDSNRequests_Ean_871692493900374813.sql`
+- `docker/test-data/testcase-001/MasterDataUpdates_Ean_871692493900164636.sql`
+- `docker/test-data/testcase-001/MasterDataUpdates_Ean_871692493900374813.sql`
+- `docker/test-data/testcase-001/EDSNRequests_Ean_871692493900164636.sql`
+- `docker/test-data/testcase-001/EDSNRequests_Ean_871692493900374813.sql`
 
 ### Counts
 
@@ -180,11 +180,11 @@ PV / BRP EANs seen in `MPCommercialCharacteristics.BalanceResponsibleParty_Compa
 
 Nguon:
 
-- `docker/mysql-init/p4_metering_point_ean_871692493900164636.sql`
-- `docker/mysql-init/p4_metering_point_ean_871692493900374813.sql`
-- `docker/mysql-init/p4_register_reading_ean_871692493900164636.sql`
-- `docker/mysql-init/p4_register_reading_ean_871692493900374813.sql`
-- `docker/mysql-init/tmr_mock_data.sql`
+- `docker/test-data/testcase-001/p4_metering_point_ean_871692493900164636.sql`
+- `docker/test-data/testcase-001/p4_metering_point_ean_871692493900374813.sql`
+- `docker/test-data/testcase-001/p4_register_reading_ean_871692493900164636.sql`
+- `docker/test-data/testcase-001/p4_register_reading_ean_871692493900374813.sql`
+- `docker/test-data/testcase-001/tmr_mock_data.sql`
 
 ### Metering point seed
 
@@ -230,9 +230,9 @@ Gas EAN:
 
 Nguon test-case hien tai:
 
-- `docker/mysql-init/grid_operators.sql`
-- `docker/mysql-init/grid_sub_operators.sql`
-- `docker/mysql-init/pvs_ean_*.sql`
+- `docker/test-data/testcase-001/grid_operators.sql`
+- `docker/test-data/testcase-001/grid_sub_operators.sql`
+- `docker/test-data/testcase-001/pvs_ean_*.sql`
 
 Nguon static seed hien tai:
 

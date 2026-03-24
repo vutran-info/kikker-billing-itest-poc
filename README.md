@@ -56,6 +56,8 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `scripts/itest-up`: start integration environment
 - `scripts/itest-down`: stop integration environment
 - `scripts/mysql-sync`: re-run idempotent MySQL init against existing volume (no `down -v`)
+- `docker/mysql-init/`: schema, migration history, and static seed data
+- `docker/test-data/testcase-001/`: mutable billing scenario data for the first end-to-end testcase
 - `scripts/verify-images`: verify running image per service
 - `PLAN.md`: rollout plan for the standalone integration-test runner
 - `ARCHITECTURE.md`: rationale for separating the environment under test from the test runner
@@ -99,6 +101,11 @@ To skip this behavior:
 ```bash
 SKIP_MYSQL_SYNC=true ./scripts/itest-up
 ```
+
+Current seed layout:
+
+- `docker/mysql-init/` keeps schema, migration history, and static seed
+- `docker/test-data/testcase-001/` keeps testcase-specific billing data that belongs to the seeded flow `C20241292`
 
 ## Swap Image Fast
 

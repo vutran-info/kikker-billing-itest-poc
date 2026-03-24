@@ -10,6 +10,7 @@ services:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     volumes:
       - ./docker/mysql-init:/docker-entrypoint-initdb.d
+      - ./docker/test-data:/docker-entrypoint-initdb.d/test-data:ro
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent"]

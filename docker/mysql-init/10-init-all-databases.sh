@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+TESTCASE_001_DIR="test-data/testcase-001"
+
 mysql_exec() {
   mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" "$@"
 }
@@ -85,6 +87,10 @@ import_data_if_table_empty() {
   import_data_file_ignore_fk "$db_name" "$sql_file"
 }
 
+testcase_001_file() {
+  printf '%s/%s' "$TESTCASE_001_DIR" "$1"
+}
+
 ensure_hourly_testcase_data_once() {
   ean_info_count=$(mysql_exec -Nse "SELECT COUNT(*) FROM \`kikker_hourly\`.\`ean_info\` WHERE \`ean\` IN ('871692493900164636','871692493900374813')" || true)
   tariff_count_164636=$(mysql_exec -Nse "SELECT COUNT(*) FROM \`kikker_hourly\`.\`hourly_product_tariff\` WHERE \`ean\`='871692493900164636'" || true)
@@ -98,10 +104,10 @@ ensure_hourly_testcase_data_once() {
   fi
 
   echo "[mysql-init] Import hourly testcase seed (one-time)"
-  import_data_file_ignore_fk "kikker_hourly" "ean_info_ean_871692493900164636.sql"
-  import_data_file_ignore_fk "kikker_hourly" "ean_info_ean_871692493900374813.sql"
-  import_data_file_ignore_fk "kikker_hourly" "hourly_product_tariff_ean_871692493900164636.sql"
-  import_data_file_ignore_fk "kikker_hourly" "hourly_product_tariff_ean_871692493900374813.sql"
+  import_data_file_ignore_fk "kikker_hourly" "$(testcase_001_file "ean_info_ean_871692493900164636.sql")"
+  import_data_file_ignore_fk "kikker_hourly" "$(testcase_001_file "ean_info_ean_871692493900374813.sql")"
+  import_data_file_ignore_fk "kikker_hourly" "$(testcase_001_file "hourly_product_tariff_ean_871692493900164636.sql")"
+  import_data_file_ignore_fk "kikker_hourly" "$(testcase_001_file "hourly_product_tariff_ean_871692493900374813.sql")"
 }
 
 refresh_edsn_testcase_data() {
@@ -124,10 +130,10 @@ JOIN tmp_edsn_request_ids t ON t.id = r.`Id`;
 DROP TEMPORARY TABLE tmp_edsn_request_ids;
 SQL
 
-  import_data_file_ignore_fk "EDSNScaled" "EDSNRequests_Ean_871692493900164636.sql"
-  import_data_file_ignore_fk "EDSNScaled" "EDSNRequests_Ean_871692493900374813.sql"
-  import_data_file_ignore_fk "EDSNScaled" "MasterDataUpdates_Ean_871692493900164636.sql"
-  import_data_file_ignore_fk "EDSNScaled" "MasterDataUpdates_Ean_871692493900374813.sql"
+  import_data_file_ignore_fk "EDSNScaled" "$(testcase_001_file "EDSNRequests_Ean_871692493900164636.sql")"
+  import_data_file_ignore_fk "EDSNScaled" "$(testcase_001_file "EDSNRequests_Ean_871692493900374813.sql")"
+  import_data_file_ignore_fk "EDSNScaled" "$(testcase_001_file "MasterDataUpdates_Ean_871692493900164636.sql")"
+  import_data_file_ignore_fk "EDSNScaled" "$(testcase_001_file "MasterDataUpdates_Ean_871692493900374813.sql")"
 }
 
 refresh_ke_billing_grid_operator_testcase_data() {
@@ -146,8 +152,8 @@ WHERE `ean` = '8712423014022';
 SET FOREIGN_KEY_CHECKS=1;
 SQL
 
-  import_data_file_ignore_fk "ke-billing" "grid_operators.sql"
-  import_data_file_ignore_fk "ke-billing" "grid_sub_operators.sql"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "grid_operators.sql")"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "grid_sub_operators.sql")"
 }
 
 refresh_ke_billing_pvs_testcase_data() {
@@ -157,10 +163,10 @@ DELETE FROM `pvs`
 WHERE `ean` IN ('5488888000025', '8712423028388', '8712423015821', '8714252005776');
 SQL
 
-  import_data_file_ignore_fk "ke-billing" "pvs_ean_5488888000025.sql"
-  import_data_file_ignore_fk "ke-billing" "pvs_ean_8712423028388.sql"
-  import_data_file_ignore_fk "ke-billing" "pvs_ean_8712423015821.sql"
-  import_data_file_ignore_fk "ke-billing" "pvs_ean_8714252005776.sql"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "pvs_ean_5488888000025.sql")"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "pvs_ean_8712423028388.sql")"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "pvs_ean_8712423015821.sql")"
+  import_data_file_ignore_fk "ke-billing" "$(testcase_001_file "pvs_ean_8714252005776.sql")"
 }
 
 refresh_p4_tmr_mock_data_testcase_data() {
@@ -170,7 +176,7 @@ DELETE FROM `tmr_mock_data`
 WHERE `ean_id` IN ('871692493900164636', '871692493900374813');
 SQL
 
-  import_data_file_ignore_fk "kikker_p4_ean_usage" "tmr_mock_data.sql"
+  import_data_file_ignore_fk "kikker_p4_ean_usage" "$(testcase_001_file "tmr_mock_data.sql")"
 }
 
 pricing_seed_loaded() {
@@ -282,20 +288,20 @@ else
 fi
 
 # Flow sample data (idempotent files use INSERT IGNORE)
-import_data_file_ignore_fk "kikkercore" "kk_contract.sql"
+import_data_file_ignore_fk "kikkercore" "$(testcase_001_file "kk_contract.sql")"
 import_data_file_ignore_fk "kikkercore" "order_status.sql"
-import_data_file_ignore_fk "kikkercore" "kk_order.sql"
-import_data_file_ignore_fk "kikkercore" "contract_info_master_lookup_C20241292.sql"
-import_data_file_ignore_fk "kikkercore" "contract_info_data_C20241292.sql"
+import_data_file_ignore_fk "kikkercore" "$(testcase_001_file "kk_order.sql")"
+import_data_file_ignore_fk "kikkercore" "$(testcase_001_file "contract_info_master_lookup_C20241292.sql")"
+import_data_file_ignore_fk "kikkercore" "$(testcase_001_file "contract_info_data_C20241292.sql")"
 refresh_edsn_testcase_data
 refresh_ke_billing_grid_operator_testcase_data
 refresh_ke_billing_pvs_testcase_data
-import_data_file "ke-auto-billing" "contract_auto_prepare.sql"
-import_data_file "ke-auto-billing" "billing_tasks.sql"
-import_data_file "kikker_p4_ean_usage" "p4_metering_point_ean_871692493900164636.sql"
-import_data_file "kikker_p4_ean_usage" "p4_metering_point_ean_871692493900374813.sql"
-import_data_file "kikker_p4_ean_usage" "p4_register_reading_ean_871692493900164636.sql"
-import_data_file "kikker_p4_ean_usage" "p4_register_reading_ean_871692493900374813.sql"
+import_data_file "ke-auto-billing" "$(testcase_001_file "contract_auto_prepare.sql")"
+import_data_file "ke-auto-billing" "$(testcase_001_file "billing_tasks.sql")"
+import_data_file "kikker_p4_ean_usage" "$(testcase_001_file "p4_metering_point_ean_871692493900164636.sql")"
+import_data_file "kikker_p4_ean_usage" "$(testcase_001_file "p4_metering_point_ean_871692493900374813.sql")"
+import_data_file "kikker_p4_ean_usage" "$(testcase_001_file "p4_register_reading_ean_871692493900164636.sql")"
+import_data_file "kikker_p4_ean_usage" "$(testcase_001_file "p4_register_reading_ean_871692493900374813.sql")"
 refresh_p4_tmr_mock_data_testcase_data
 ensure_hourly_testcase_data_once
 
