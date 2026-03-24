@@ -33,6 +33,22 @@ public sealed class MySqlComposeClient
             sql);
     }
 
+    public async Task<string[]> QueryTabSeparatedRowAsync(string database, string sql)
+    {
+        var output = await QueryScalarAsync(database, sql);
+        var row = output
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .LastOrDefault()?
+            .Split('\t');
+
+        if (row is null || row.Length == 0)
+        {
+            throw new InvalidOperationException("Expected one tab-separated row from MySQL query, but query returned no data.");
+        }
+
+        return row;
+    }
+
     public async Task<string> QueryScalarAsync(string database, string sql)
     {
         var output = await compose.RunAsync(

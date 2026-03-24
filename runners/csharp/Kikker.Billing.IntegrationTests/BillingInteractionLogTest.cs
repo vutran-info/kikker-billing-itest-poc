@@ -17,18 +17,9 @@ public sealed class BillingInteractionLogTest
     [Trait("Category", "CollectorData")]
     public async Task Latest_collector_data_should_contain_the_expected_business_payload_for_the_seeded_contract()
     {
+        var scenario = await fixture.EnsureYearlyBillingScenarioAsync();
         var options = fixture.Options;
-        var collectorDataJson = await fixture.MySql.QueryScalarAsync(
-            "ke-billing",
-            $@"
-SELECT CAST(collector_data AS CHAR)
-FROM billing_interaction_log
-WHERE contract_number = '{options.ContractNumber}'
-  AND type = 'YEARLY_BILL'
-  AND collector_data IS NOT NULL
-ORDER BY id DESC
-LIMIT 1;");
-
+        var collectorDataJson = scenario.CollectorDataJson;
         Assert.False(string.IsNullOrWhiteSpace(collectorDataJson));
 
         using var document = JsonDocument.Parse(collectorDataJson);
