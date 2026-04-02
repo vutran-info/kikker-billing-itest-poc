@@ -54,6 +54,7 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `.env.ke-calculated-dynamic`: local `ke-calculated-dynamic` env (generated from example, gitignored)
 - `scripts/set-image`: update image/tag for a service
 - `scripts/itest-up`: start integration environment
+- `scripts/itest-stop`: stop integration environment without removing containers
 - `scripts/itest-down`: stop integration environment
 - `scripts/mysql-sync`: re-run idempotent MySQL init against existing volume (no `down -v`)
 - `docker/mysql-init/`: schema, migration history, and static seed data
@@ -101,6 +102,18 @@ To skip this behavior:
 
 ```bash
 SKIP_MYSQL_SYNC=true ./scripts/itest-up
+```
+
+To stop containers without removing them:
+
+```bash
+./scripts/itest-stop
+```
+
+To remove Compose containers and network:
+
+```bash
+./scripts/itest-down
 ```
 
 Current seed layout:
