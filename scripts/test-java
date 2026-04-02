@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT_DIR"
+
+LOCAL_MAVEN_REPO="$ROOT_DIR/.m2/repository"
+mkdir -p "$LOCAL_MAVEN_REPO"
+
+mvn -Dmaven.repo.local="$LOCAL_MAVEN_REPO" -f runners/java/pom.xml test "$@"

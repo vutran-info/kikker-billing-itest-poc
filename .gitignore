@@ -19,6 +19,8 @@
 bin/
 obj/
 TestResults/
+target/
+.m2/
 
 # IDE
 .vs/

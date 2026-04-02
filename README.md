@@ -63,9 +63,10 @@ Run required infra (`MySQL`, `RabbitMQ`) locally in Docker for integration tests
 - `ARCHITECTURE.md`: rationale for separating the environment under test from the test runner
 - `testspec/`: language-agnostic integration flow specs
 - `runners/csharp/`: first black-box integration-test runner implementation
-- `runners/java/`: placeholder for future Java runner
+- `runners/java/`: Java black-box integration-test runner using Maven and JUnit 5
 - `runners/python/`: placeholder for future Python runner
 - `scripts/test-csharp`: run the C# integration runner
+- `scripts/test-java`: run the Java integration runner
 
 ## Quick Start
 
@@ -150,13 +151,15 @@ Current structure:
 
 - `testspec/` stores the language-agnostic flow definition
 - `runners/csharp/` contains the first runner implementation using `xUnit`
-- `runners/java/` and `runners/python/` are reserved for future parity runners
+- `runners/java/` contains a parity runner implementation using `JUnit 5`
+- `runners/python/` is reserved for a future parity runner
 
 Run the first smoke test:
 
 ```bash
 ./scripts/itest-up
 ./scripts/test-csharp
+./scripts/test-java
 ```
 
 The first smoke test currently validates:
