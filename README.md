@@ -97,11 +97,21 @@ To apply new DB SQL/init changes on an existing MySQL volume:
 ./scripts/mysql-sync
 ```
 
-`./scripts/itest-up` now auto-runs `mysql-sync` after `up`.  
-To skip this behavior:
+`./scripts/itest-up` now uses this behavior:
+
+- resumes fast after `./scripts/itest-stop` and skips `mysql-sync`
+- runs `mysql-sync` automatically when the Compose environment starts fresh
+
+To skip `mysql-sync` entirely:
 
 ```bash
 SKIP_MYSQL_SYNC=true ./scripts/itest-up
+```
+
+To force a reseed during `up` even when resuming stopped containers:
+
+```bash
+FORCE_MYSQL_SYNC=true ./scripts/itest-up
 ```
 
 To stop containers without removing them:
@@ -115,6 +125,14 @@ To remove Compose containers and network:
 ```bash
 ./scripts/itest-down
 ```
+
+To reseed test data on demand without recreating containers:
+
+```bash
+./scripts/mysql-sync
+```
+
+Note: `./scripts/itest-down` removes containers and network, but does not remove Docker volumes. If you want a truly clean MySQL volume, use `docker compose down -v` explicitly.
 
 Current seed layout:
 

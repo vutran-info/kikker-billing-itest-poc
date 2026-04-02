@@ -3,6 +3,7 @@ set -euo pipefail
 
 ENV_FILE="${ENV_FILE:-.env.itest}"
 COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.itest.yml}"
+FORCE_MYSQL_SYNC="${FORCE_MYSQL_SYNC:-false}"
 
 if [[ ! -f "${ENV_FILE}" ]]; then
   cp .env.itest.example "${ENV_FILE}"
@@ -69,8 +70,20 @@ if [[ ! -f ".env.ke-calculated-dynamic" && -f ".env.ke-calculated-dynamic.exampl
   echo "Created .env.ke-calculated-dynamic from template."
 fi
 
+existing_mysql_container_id="$(
+  docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" ps -a -q mysql 2>/dev/null || true
+)"
+
 docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d --remove-orphans "$@"
 
-if [[ "${SKIP_MYSQL_SYNC:-false}" != "true" ]]; then
+if [[ "${SKIP_MYSQL_SYNC:-false}" == "true" ]]; then
+  echo "Skipping mysql-sync because SKIP_MYSQL_SYNC=true."
+elif [[ "${FORCE_MYSQL_SYNC}" == "true" ]]; then
+  echo "Running mysql-sync because FORCE_MYSQL_SYNC=true."
+  ENV_FILE="${ENV_FILE}" COMPOSE_FILE="${COMPOSE_FILE}" "$(dirname "$0")/mysql-sync"
+elif [[ -n "${existing_mysql_container_id}" ]]; then
+  echo "Skipping mysql-sync because existing containers were resumed. Run ./scripts/mysql-sync to reseed."
+else
+  echo "Running mysql-sync because this compose environment is starting fresh."
   ENV_FILE="${ENV_FILE}" COMPOSE_FILE="${COMPOSE_FILE}" "$(dirname "$0")/mysql-sync"
 fi
